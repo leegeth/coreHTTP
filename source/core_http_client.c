@@ -1340,9 +1340,9 @@ static HTTPStatus_t addHeader( HTTPRequestHeaders_t * pRequestHeaders,
             pBufferCur += fieldLen;
 
             /* Copy the field separator, ": ", into the buffer. */
-            ( void ) strncpy( pBufferCur,
-                              HTTP_HEADER_FIELD_SEPARATOR,
-                              HTTP_HEADER_FIELD_SEPARATOR_LEN );
+            ( void ) memcpy( pBufferCur,
+                             HTTP_HEADER_FIELD_SEPARATOR,
+                             HTTP_HEADER_FIELD_SEPARATOR_LEN );
 
             pBufferCur += HTTP_HEADER_FIELD_SEPARATOR_LEN;
 
@@ -1488,9 +1488,9 @@ static HTTPStatus_t writeRequestLine( HTTPRequestHeaders_t * pRequestHeaders,
         /* Use "/" as default value if <PATH> is NULL. */
         if( ( pPath == NULL ) || ( pathLen == 0U ) )
         {
-            ( void ) strncpy( pBufferCur,
-                              HTTP_EMPTY_PATH,
-                              HTTP_EMPTY_PATH_LEN );
+            ( void ) memcpy( pBufferCur,
+                             HTTP_EMPTY_PATH,
+                             HTTP_EMPTY_PATH_LEN );
             pBufferCur += HTTP_EMPTY_PATH_LEN;
         }
         else
@@ -1502,9 +1502,9 @@ static HTTPStatus_t writeRequestLine( HTTPRequestHeaders_t * pRequestHeaders,
         *pBufferCur = SPACE_CHARACTER;
         pBufferCur += SPACE_CHARACTER_LEN;
 
-        ( void ) strncpy( pBufferCur,
-                          HTTP_PROTOCOL_VERSION,
-                          HTTP_PROTOCOL_VERSION_LEN );
+        ( void ) memcpy( pBufferCur,
+                         HTTP_PROTOCOL_VERSION,
+                         HTTP_PROTOCOL_VERSION_LEN );
         pBufferCur += HTTP_PROTOCOL_VERSION_LEN;
 
         ( void ) strncpy( pBufferCur,
@@ -2017,7 +2017,7 @@ static HTTPStatus_t receiveAndParseHttpResponse( const TransportInterface_t * pT
              * Because we cannot know how large the HTTP response will be in
              * total, parsing will tell us if the end of the message is reached.*/
             shouldParse = 1U;
-            totalReceived += currentReceived;
+            totalReceived += ( size_t ) currentReceived;
         }
         else
         {
@@ -2044,7 +2044,7 @@ static HTTPStatus_t receiveAndParseHttpResponse( const TransportInterface_t * pT
              * to the parser that there is no more data from the server (EOF). */
             returnStatus = parseHttpResponse( &parsingContext,
                                               pResponse,
-                                              currentReceived );
+                                              ( size_t ) currentReceived );
         }
 
         /* Reading should continue if there are no errors in the transport receive
